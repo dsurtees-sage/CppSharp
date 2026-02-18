@@ -291,7 +291,7 @@ namespace CppSharp.Generators.CLI
 
             GenerateClassVariables(@class);
 
-            if (CLIGenerator.ShouldGenerateClassNativeField(@class))
+            if (CLIGenerator.ShouldGenerateClassNativeField(@class) && !@class.IsInterface)
             {
                 PushBlock(BlockKind.AccessSpecifier);
                 WriteLine("protected:");
