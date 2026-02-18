@@ -720,7 +720,7 @@ namespace CppSharp.Generators.CLI
         private bool GenerateClassConstructorBase(Class @class, Method method = null,
             bool withOwnNativeInstanceParam = false)
         {
-            if (!@class.NeedsBase)
+            if (!@class.NeedsBase || (@class.HasBase && @class.BaseClass.IsInterface))
                 return false;
 
             if (@class.IsValueType)
