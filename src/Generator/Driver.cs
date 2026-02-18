@@ -265,6 +265,10 @@ namespace CppSharp
             if (Options.IsCSharpGenerator)
             {
                 passes.AddPass(new GenerateAbstractImplementationsPass());
+            }
+
+            if(Options.IsCLIGenerator || Options.IsCSharpGenerator)
+            {
                 passes.AddPass(new MultipleInheritancePass());
             }
 
