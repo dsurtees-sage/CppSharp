@@ -278,7 +278,8 @@ namespace CppSharp.Generators.CLI
             if (CLIGenerator.ShouldGenerateClassNativeField(@class))
                 GenerateClassNativeField(nativeType);
 
-            GenerateClassConstructors(@class, nativeType);
+            if(!@class.IsInterface)
+                GenerateClassConstructors(@class, nativeType);
 
             GenerateClassProperties(@class);
 
