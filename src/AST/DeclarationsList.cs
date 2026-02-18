@@ -41,7 +41,11 @@ namespace CppSharp.AST
             }
             else
             {
-                var i = BinarySearch(GetStart(kind), offset, item);
+                int kindStart = GetStart(kind);
+
+                //If the desired index falls within the given kinds section, use that index.
+                var i = index > kindStart && index < offset ? 
+                    index : BinarySearch(kindStart, offset, item);
                 base.InsertItem(i, item);
             }
 
