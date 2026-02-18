@@ -198,7 +198,7 @@ namespace CppSharp.Generators.CLI
                 case PrimitiveType.Float: return "float";
                 case PrimitiveType.Double: return "double";
                 case PrimitiveType.LongDouble: return "long double";
-                case PrimitiveType.IntPtr: return "IntPtr";
+                case PrimitiveType.IntPtr: return "::System::IntPtr";
                 case PrimitiveType.UIntPtr: return "UIntPtr";
                 case PrimitiveType.Null: return "void*";
                 case PrimitiveType.String: return "::System::String";
