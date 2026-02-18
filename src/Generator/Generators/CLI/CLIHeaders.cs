@@ -543,8 +543,11 @@ namespace CppSharp.Generators.CLI
                 GenerateMethod(method);
             }
 
-            foreach (var method in staticMethods)
-                GenerateMethod(method);
+            if(!@class.IsInterface)
+            {
+                foreach (var method in staticMethods)
+                    GenerateMethod(method);
+            }
 
             Unindent();
         }
