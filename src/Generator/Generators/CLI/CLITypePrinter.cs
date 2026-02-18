@@ -339,7 +339,7 @@ namespace CppSharp.Generators.CLI
             if (@class.CompleteDeclaration != null)
                 return VisitClassDecl(@class.CompleteDeclaration as Class);
 
-            return $"{@class.Name}{(@class.IsRefType ? "^" : string.Empty)}";
+            return $"{@class.Name}{(@class.IsRefType || @class.IsInterface ? "^" : string.Empty)}";
         }
 
         public override TypePrinterResult VisitClassTemplateDecl(ClassTemplate template)
