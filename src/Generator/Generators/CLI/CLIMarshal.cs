@@ -199,6 +199,7 @@ namespace CppSharp.Generators.CLI
                 case PrimitiveType.Double:
                 case PrimitiveType.LongDouble:
                 case PrimitiveType.Null:
+                case PrimitiveType.IntPtr:
                     Context.Return.Write(Context.ReturnVarName);
                     return true;
             }
