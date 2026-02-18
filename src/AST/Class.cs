@@ -147,6 +147,23 @@ namespace CppSharp.AST
             }
         }
 
+        public Class CompleteInterface
+        {
+            get
+            {
+                foreach (var @base in Bases)
+                {
+                    if (@base.IsClass && @base.Class.IsGenerated
+                        &&@base.Class.IsInterface && @base.Class.OriginalClass == this)
+                        return @base.Class;
+                }
+
+                return null;
+            }
+        }
+
+        public bool HasCompleteInterface => CompleteInterface != null;
+
         public bool HasNonIgnoredBase =>
             HasBaseClass && !IsValueType
                          && BaseClass is { IsValueType: false, IsGenerated: true };
