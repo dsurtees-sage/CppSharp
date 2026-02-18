@@ -679,10 +679,14 @@ namespace CppSharp.Generators.CLI
                 WriteOpenBraceAndIndent();
 
                 if (property.HasGetter)
-                    WriteLine("{0} get();", type);
+                    WriteLine("{0}{1} get();", 
+                        property.GetMethod?.IsVirtual == true || property.GetMethod?.IsOverride == true ? "virtual " : "", 
+                        type);
 
                 if (property.HasSetter)
-                    WriteLine("void set({0});", type);
+                    WriteLine("{0} void set({1});",
+                        property.SetMethod?.IsVirtual == true || property.SetMethod?.IsOverride == true? "virtual " : "",
+                        type);
 
                 UnindentAndWriteCloseBrace();
             }
