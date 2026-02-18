@@ -127,42 +127,44 @@ namespace CppSharp.Generators.CLI
             PushBlock(BlockKind.Class);
 
             GenerateDeclContext(@class);
-
-            GenerateClassConstructors(@class);
-
-            GenerateClassMethods(@class, @class);
-
-            if (CLIGenerator.ShouldGenerateClassNativeField(@class))
+            if (!@class.IsInterface)
             {
-                var qualifiedIdentifier = QualifiedIdentifier(@class);
+                GenerateClassConstructors(@class);
 
-                PushBlock(BlockKind.Method);
-                WriteLine("::System::IntPtr {0}::{1}::get()",
-                    qualifiedIdentifier, Helpers.InstanceIdentifier);
-                WriteOpenBraceAndIndent();
-                WriteLine("return ::System::IntPtr(NativePtr);");
-                UnindentAndWriteCloseBrace();
-                PopBlock(NewLineKind.BeforeNextBlock);
+                GenerateClassMethods(@class, @class);
 
-                PushBlock(BlockKind.Method);
-                WriteLine("void {0}::{1}::set(::System::IntPtr object)",
-                    qualifiedIdentifier, Helpers.InstanceIdentifier);
-                WriteOpenBraceAndIndent();
-                var nativeType = $"{typePrinter.PrintTag(@class)}::{@class.QualifiedOriginalName}*";
-                WriteLine("NativePtr = ({0})object.ToPointer();", nativeType);
-                UnindentAndWriteCloseBrace();
-                PopBlock(NewLineKind.BeforeNextBlock);
-            }
+                if (CLIGenerator.ShouldGenerateClassNativeField(@class))
+                {
+                    var qualifiedIdentifier = QualifiedIdentifier(@class);
 
-            GenerateClassProperties(@class, @class);
+                    PushBlock(BlockKind.Method);
+                    WriteLine("::System::IntPtr {0}::{1}::get()",
+                        qualifiedIdentifier, Helpers.InstanceIdentifier);
+                    WriteOpenBraceAndIndent();
+                    WriteLine("return ::System::IntPtr(NativePtr);");
+                    UnindentAndWriteCloseBrace();
+                    PopBlock(NewLineKind.BeforeNextBlock);
 
-            foreach (var @event in @class.Events)
-            {
-                if (!@event.IsGenerated)
-                    continue;
+                    PushBlock(BlockKind.Method);
+                    WriteLine("void {0}::{1}::set(::System::IntPtr object)",
+                        qualifiedIdentifier, Helpers.InstanceIdentifier);
+                    WriteOpenBraceAndIndent();
+                    var nativeType = $"{typePrinter.PrintTag(@class)}::{@class.QualifiedOriginalName}*";
+                    WriteLine("NativePtr = ({0})object.ToPointer();", nativeType);
+                    UnindentAndWriteCloseBrace();
+                    PopBlock(NewLineKind.BeforeNextBlock);
+                }
 
-                GenerateDeclarationCommon(@event);
-                GenerateEvent(@event, @class);
+                GenerateClassProperties(@class, @class);
+
+                foreach (var @event in @class.Events)
+                {
+                    if (!@event.IsGenerated)
+                        continue;
+
+                    GenerateDeclarationCommon(@event);
+                    GenerateEvent(@event, @class);
+                }
             }
 
             foreach (var variable in @class.Variables)
