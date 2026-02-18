@@ -186,7 +186,7 @@ namespace CppSharp.Generators.CLI
 
             string keywords;
             if (DriverOptions.IsCLIGenerator)
-                keywords = @class.IsValueType ? "value struct" : "ref class";
+                keywords = @class.IsValueType ? "value struct" : @class.IsInterface ? "interface class" : "ref class";
             else
                 keywords = @class.IsValueType ? "struct" : "class";
 
