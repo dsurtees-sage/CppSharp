@@ -48,7 +48,7 @@ namespace CppSharp.Generators.C
             if (!ResolveTypeMaps)
                 return false;
 
-            if (!TypeMapDatabase.FindTypeMap(type, out var typeMap) || typeMap.IsIgnored)
+            if (!TypeMapDatabase.FindTypeMap(type, GeneratorKind.CPlusPlus, out var typeMap) || typeMap.IsIgnored)
                 return false;
 
             var typePrinterContext = new TypePrinterContext

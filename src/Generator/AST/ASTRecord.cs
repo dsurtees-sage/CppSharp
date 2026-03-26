@@ -126,7 +126,7 @@ namespace CppSharp.Generators.AST
             if (!record.GetParent(out Class decl))
                 return false;
 
-            return record.Object is Class recordDecl && recordDecl == decl.BaseClass;
+            return record.Object is Class recordDecl && decl.Bases.Any(b => b.Class == recordDecl);
         }
 
         public static bool IsFieldValueType(this ASTRecord record)

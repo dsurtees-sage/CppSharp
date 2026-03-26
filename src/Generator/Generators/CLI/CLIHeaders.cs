@@ -57,6 +57,12 @@ namespace CppSharp.Generators.CLI
 
             var includes = new SortedSet<string>(StringComparer.InvariantCulture);
 
+            if(TranslationUnit.FileName == "DFilter.h")
+            {
+                int i = 0;
+                i++;
+            }
+
             foreach (var typeRef in typeReferenceCollector.TypeReferences)
             {
                 if (typeRef.Include.TranslationUnit == TranslationUnit)
@@ -199,7 +205,7 @@ namespace CppSharp.Generators.CLI
             };
 
             // Merge nested namespaces into the parent namespace.
-            while (@namespace.Declarations.Count == 1 &&
+            while (@namespace.Declarations.Count == 1 && @namespace.TypeReferences.Count == 0 &&
                    @namespace.Declarations[0] is Namespace { IsInline: false } childNamespace)
             {
                 @namespace = childNamespace;
@@ -275,8 +281,9 @@ namespace CppSharp.Generators.CLI
 
             string nativeType = $"{typePrinter.PrintTag(@class.IsInterface ? @class.OriginalClass : @class)}::{@class.QualifiedOriginalName}*";
 
+
             if (CLIGenerator.ShouldGenerateClassNativeField(@class))
-                GenerateClassNativeField(nativeType);
+                GenerateClassNativeField(nativeType, @class);
 
             if(!@class.IsInterface)
                 GenerateClassConstructors(@class, nativeType);
@@ -315,19 +322,22 @@ namespace CppSharp.Generators.CLI
             WriteLine("};");
         }
 
-        public void GenerateClassNativeField(string nativeType)
+        public void GenerateClassNativeField(string nativeType, Class @class)
         {
-            WriteLineIndent("property {0} NativePtr;", nativeType);
+            WriteLineIndent("{0}property {1} NativePtr;", @class.HasCompleteInterface ? "virtual " : string.Empty, nativeType);
 
-            Indent();
-            WriteLine("property ::System::IntPtr {0}", Helpers.InstanceIdentifier);
-            WriteOpenBraceAndIndent();
-            WriteLine("virtual ::System::IntPtr get();");
-            WriteLine("virtual void set(::System::IntPtr instance);");
-            UnindentAndWriteCloseBrace();
-            NewLine();
+            if(!@class.IsInterface)
+            {
+                Indent();
+                WriteLine("property ::System::IntPtr {0}", Helpers.InstanceIdentifier);
+                WriteOpenBraceAndIndent();
+                WriteLine("virtual ::System::IntPtr get();");
+                WriteLine("virtual void set(::System::IntPtr instance);");
+                UnindentAndWriteCloseBrace();
+                NewLine();
 
-            Unindent();
+                Unindent();
+            }
         }
 
         public void GenerateClassGenericMethods(Class @class)
@@ -599,19 +609,32 @@ namespace CppSharp.Generators.CLI
             if (isTopLevel)
                 Write("public ");
 
-            Write(@class.IsValueType ? "value struct " : "ref class ");
+            Write(@class.IsValueType ? "value struct " : @class.IsInterface ? "interface class " : "ref class ");
 
             Write("{0}", @class.Name);
 
-            if (@class.IsStatic)
+            if (@class.IsStatic && !@class.IsInterface)
                 Write(" abstract sealed");
 
-            if (!@class.IsStatic)
+            if (!@class.IsStatic || @class.IsInterface)
             {
+                List<string> inheritsFrom = new List<string>();
+
                 if (@class.HasRefBase())
-                    Write(" : {0}", QualifiedIdentifier(@class.Bases[0].Class));
+                    inheritsFrom.Add(QualifiedIdentifier(@class.Bases[0].Class));
                 else if (@class.IsRefType)
-                    Write(" : ICppInstance");
+                    inheritsFrom.Add("ICppInstance");
+
+                foreach(var baseClass in @class.Bases)
+                {
+                    if (baseClass.Class?.IsInterface == true)
+                        inheritsFrom.Add(QualifiedIdentifier(baseClass.Class));
+                }
+
+                if(inheritsFrom.Count > 0)
+                {
+                    Write(" : {0}", string.Join(", ", inheritsFrom));
+                }
             }
         }
 
