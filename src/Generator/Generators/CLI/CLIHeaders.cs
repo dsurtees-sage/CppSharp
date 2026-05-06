@@ -324,20 +324,17 @@ namespace CppSharp.Generators.CLI
 
         public void GenerateClassNativeField(string nativeType, Class @class)
         {
-            WriteLineIndent("{0}property {1} NativePtr;", @class.HasCompleteInterface ? "virtual " : string.Empty, nativeType);
+            WriteLineIndent("property {0} NativePtr;", nativeType);
 
-            if(!@class.IsInterface)
-            {
-                Indent();
-                WriteLine("property ::System::IntPtr {0}", Helpers.InstanceIdentifier);
-                WriteOpenBraceAndIndent();
-                WriteLine("virtual ::System::IntPtr get();");
-                WriteLine("virtual void set(::System::IntPtr instance);");
-                UnindentAndWriteCloseBrace();
-                NewLine();
+            Indent();
+            WriteLine("property ::System::IntPtr {0}", Helpers.InstanceIdentifier);
+            WriteOpenBraceAndIndent();
+            WriteLine("virtual ::System::IntPtr get();");
+            WriteLine("virtual void set(::System::IntPtr instance);");
+            UnindentAndWriteCloseBrace();
+            NewLine();
 
-                Unindent();
-            }
+            Unindent();
         }
 
         public void GenerateClassGenericMethods(Class @class)

@@ -34,7 +34,7 @@ namespace CppSharp.Generators.CLI
             if (@class.IsStatic)
                 return false;
 
-            return (@class.IsRefType || @class.IsInterface) && (!@class.NeedsBase || !@class.HasRefBase());
+            return @class.IsRefType && (!@class.NeedsBase || !@class.HasRefBase());
         }
     }
 }
